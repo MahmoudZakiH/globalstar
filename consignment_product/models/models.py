@@ -176,9 +176,9 @@ class AccountMove(models.Model):
                             'move_type': 'entry',
                             'ref': rec.name,
                             'date': fields.date.today(),
-                            'journal_id': self.env['account.journal'].sudo().search([('is_consignment','=',True)],limit=1).id if self.env['account.journal'].sudo().search([('is_consignment','=',True)],limit=1) else False ,
+                            'journal_id': self.env['account.journal'].sudo().search([('is_consignment','=',True), ('company_id','=', rec.company_id.id)],limit=1).id if self.env['account.journal'].sudo().search([('is_consignment','=',True), ('company_id','=', rec.company_id.id)],limit=1) else False ,
                             'line_ids': [(0, 0, {
-                                'account_id': self.env['account.account'].sudo().search([('is_consignment','=',True)],limit=1).id if self.env['account.account'].sudo().search([('is_consignment','=',True)],limit=1) else False ,
+                                'account_id': self.env['account.account'].sudo().search([('is_consignment','=',True), ('company_id','=', rec.company_id.id)],limit=1).id if self.env['account.account'].sudo().search([('is_consignment','=',True), ('company_id','=', rec.company_id.id)],limit=1) else False ,
                                 # 'partner_id': vendor.id,
                                 'name': 'Consignment',
                                 'debit': amount,

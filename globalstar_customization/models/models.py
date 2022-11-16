@@ -10,6 +10,24 @@ class PartnerGlobal(models.Model):
     contact_person_id = fields.Many2one(comodel_name="res.users", default=lambda self: self.env.user)
     c_r = fields.Char(string="C.R #")
     nickname = fields.Char()
+    credit_limit = fields.Float()
+
+
+class SaleOrderGlobal(models.Model):
+    _inherit = 'sale.order'
+
+    credit_limit_available = fields.Float(compute='_calc_credit_limit_available')
+
+    def action_confirm(self):
+        for rec in self:
+            if (rec.credit_limit_available - rec.amount_total) < 0:
+                raise UserError(_('sorry, your credit limit is not enough'))
+        return super(SaleOrderGlobal, self).action_confirm()
+
+    def _calc_credit_limit_available(self):
+        for rec in self:
+            if rec.partner_id:
+                rec.credit_limit_available = rec.partner_id.credit_limit - rec.partner_id.total_due
 
 
 class AccountPaymentGlobal(models.Model):

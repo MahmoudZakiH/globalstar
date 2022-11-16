@@ -66,14 +66,13 @@ class ProductTemplate(models.Model):
     limit_discount = fields.Float(string="Limit Discount",  required=False, )
 
 
-
-class ProductProduct(models.Model):
-    _inherit = 'product.product'
-
-    is_consignment = fields.Boolean(string="Is Consignment",  )
-    is_great_a = fields.Boolean(string="Grade A", )
-    is_great_b = fields.Boolean(string="Grade B", )
-    limit_discount = fields.Float(string="Limit Discount", required=False, )
+# class ProductProduct(models.Model):
+#     _inherit = 'product.product'
+#
+#     is_consignment = fields.Boolean(string="Is Consignment",  )
+#     is_great_a = fields.Boolean(string="Grade A", )
+#     is_great_b = fields.Boolean(string="Grade B", )
+#     limit_discount = fields.Float(string="Limit Discount", required=False, )
 
 
 class AccountJournal(models.Model):

@@ -1,0 +1,18 @@
+.row table {
+  border: 3px solid black;
+  font-size:15px;
+ }
+ table{
+ border: 3px solid black;
+ font-size:15px;
+ }
+.row table tr{
+border:1px solid black;
+height:20px;
+}
+.row table td th{
+border:1px solid black;
+}
+table tr td th{
+ border: 1px solid black;
+ }

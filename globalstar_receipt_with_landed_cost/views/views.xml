@@ -1,0 +1,22 @@
+<odoo>
+    <data>
+
+        <record id="view_picking_form_inherit_global_landed_cost" model="ir.ui.view">
+            <field name="name">view_picking_form.inherit_global_landed_cost</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="get_land_costs" class="oe_stat_button" icon="fa-arrows-v" type="object">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">Landed Cost</span>
+                        </div>
+                    </button>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

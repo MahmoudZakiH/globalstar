@@ -85,19 +85,19 @@ class EditProductTemplate(models.Model):
 class EditProductProduct(models.Model):
     _inherit = 'product.product'
 
-    variety_id = fields.Many2one(comodel_name="variety", string="Variety", required=False, )
-    class_class = fields.Integer(string="Class", required=False, )
-    size = fields.Char(string="Size", required=False, )
-    origin_id = fields.Many2one(comodel_name="origin", string="Origin", required=False, )
-    net_weight = fields.Float(string="Net Weight", required=False, )
-    brand = fields.Char(string="Brand", required=False, )
-    type_id = fields.Many2one(comodel_name="type", string="Type", required=False, )
-    purchase_indicator = fields.Selection(string="Purchase Indicator", selection=[('purchasable', 'Purchasable'), (
-    'un_purchasable', 'UnPurchasable'), ], required=False, )
-    serial_code = fields.Char(string="Serial Code", required=False, digits=(5, 2), )
-    identification = fields.Char(string="Identification", required=False, )
-    code = fields.Char(string="Code", required=False, copy=False)
-    sequence = fields.Integer(string="Sequence", required=False, default=0, copy=False)
+    # variety_id = fields.Many2one(comodel_name="variety", string="Variety", required=False, )
+    # class_class = fields.Integer(string="Class", required=False, )
+    # size = fields.Char(string="Size", required=False, )
+    # origin_id = fields.Many2one(comodel_name="origin", string="Origin", required=False, )
+    # net_weight = fields.Float(string="Net Weight", required=False, )
+    # brand = fields.Char(string="Brand", required=False, )
+    # type_id = fields.Many2one(comodel_name="type", string="Type", required=False, )
+    # purchase_indicator = fields.Selection(string="Purchase Indicator", selection=[('purchasable', 'Purchasable'), (
+    # 'un_purchasable', 'UnPurchasable'), ], required=False, )
+    # serial_code = fields.Char(string="Serial Code", required=False, digits=(5, 2), )
+    # identification = fields.Char(string="Identification", required=False, )
+    # code = fields.Char(string="Code", required=False, copy=False)
+    # sequence = fields.Integer(string="Sequence", required=False, default=0, copy=False)
 
     def button_generate_name(self):
         for rec in self:

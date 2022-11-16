@@ -10,10 +10,24 @@
                 <xpath expr="//field[@name='category_id']" position="after">
                     <field name="c_r"/>
                     <field name="contact_person_id"/>
+                    <field name="credit_limit"/>
                 </xpath>
 
                 <xpath expr="//span[@name='address_name']" position="before">
                     <field name="nickname"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="sale_order_global_inherit" model="ir.ui.view">
+            <field name="name">sale.order.global_inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="credit_limit_available"/>
                 </xpath>
 
             </field>

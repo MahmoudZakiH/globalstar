@@ -24,6 +24,9 @@ class AccountMoveGlobal(models.Model):
             credit_disc = self.env['account.account'].search_read(
                 [('customer_discount', '=', 'credit'), ('company_id', '=', rec.company_id.id)], fields=['id'],
                 limit=1)
+            vat_disc = self.env['account.account'].search_read(
+                [('customer_discount', '=', 'vat'), ('company_id', '=', rec.company_id.id)], fields=['id'],
+                limit=1)
             journal = self.env['account.journal'].sudo().search([('partner_discount', '=', True), ('company_id', '=', rec.company_id.id)], limit=1)
             if not journal:
                 raise ValidationError(_('Please Select Partner Discount In Journals First'))
@@ -32,12 +35,8 @@ class AccountMoveGlobal(models.Model):
                     if rec.partner_id:
                         if rec.partner_id.invoice_percentage > 0:
                             disc = rec.partner_id.invoice_percentage * rec.amount_untaxed_signed / 100
-                            disc_move = self.env['account.move'].create({
-                                'move_type': 'entry',
-                                'ref': rec.name,
-                                'journal_id': journal.id,
-                                'date': fields.date.today(),
-                                'line_ids': [(0, 0, {
+                            vat = rec.partner_id.invoice_percentage * rec.amount_tax_signed / 100
+                            lines = [(0, 0, {
                                     'name': _('Customer Discount'),
                                     'account_id': debit_disc[0]['id'],
                                     'debit': disc,
@@ -47,9 +46,23 @@ class AccountMoveGlobal(models.Model):
                                     'name': _('Customer Discount'),
                                     'account_id': credit_disc[0]['id'],
                                     'debit': 0,
-                                    'credit': disc,
+                                    'credit': disc - vat,
                                     'is_partner_disc': True,
-                                })],
+                                })]
+                            if rec.amount_tax_signed > 0 and vat_disc:
+                                lines.append((0, 0, {
+                                    'name': _('Customer Discount'),
+                                    'account_id': vat_disc[0]['id'],
+                                    'debit': 0,
+                                    'credit': vat,
+                                    'is_partner_disc': True,
+                                }))
+                            disc_move = self.env['account.move'].create({
+                                'move_type': 'entry',
+                                'ref': rec.name,
+                                'journal_id': journal.id,
+                                'date': fields.date.today(),
+                                'line_ids': lines,
                             })
                             rec.discount_move_id = disc_move.id
                             disc_move.action_post()
@@ -80,7 +93,7 @@ class AccountMoveLineGlobal(models.Model):
 class AccountAccountGlobal(models.Model):
     _inherit = 'account.account'
 
-    customer_discount = fields.Selection(selection=[('debit', 'Debit'), ('credit', 'Credit')])
+    customer_discount = fields.Selection(selection=[('debit', 'Debit'), ('credit', 'Credit'), ('vat', 'Vat')])
 
 
 class AccountJournalGlobal(models.Model):

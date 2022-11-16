@@ -1,0 +1,45 @@
+<odoo>
+    <data>
+
+        <record id="stock_picking_distribution_locations_form" model="ir.ui.view">
+            <field name="name">stock_picking.distribution_locations.form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//page[@name='note']" position="after">
+                    <page string="Distribution Locations" name="distribution_location"
+                          attrs="{'invisible': ['|', ('state', '!=', 'done'), ('picking_type_code', 'not in', ['incoming', 'internal'])]}">
+                        <field name="products_domain_ids" invisible="1"/>
+                        <field name="distribution_location_ids">
+                            <tree editable="button">
+                                <field name="product_id" domain="[('id', 'in', parent.products_domain_ids)]"
+                                       widget="selection"/>
+                                <field name="location_id"/>
+                                <field name="quantity"/>
+                            </tree>
+                        </field>
+                        <field name="is_transferred" invisible="1"/>
+                        <button string="Transfer" class="oe_highlight" type="object" name="distribution_locations"
+                                data-hotkey="t" attrs="{'invisible': [('is_transferred', '=', True)]}"/>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="view_picking_type_form_distribution_locations" model="ir.ui.view">
+            <field name="name">view_picking_type_form.distribution_locations</field>
+            <field name="model">stock.picking.type</field>
+            <field name="inherit_id" ref="stock.view_picking_type_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='default_location_dest_id']" position="after">
+                    <field name="internal_transit"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

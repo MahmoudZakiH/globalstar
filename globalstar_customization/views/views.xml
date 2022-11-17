@@ -88,5 +88,18 @@
             </field>
         </record>
 
+        <record id="view_out_invoice_tree_global_inherit" model="ir.ui.view">
+            <field name="name">view_out_invoice_tree_global_inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_invoice_tree"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='invoice_date_due']" position="attributes">
+                    <attribute name="widget">date</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
     </data>
 </odoo>

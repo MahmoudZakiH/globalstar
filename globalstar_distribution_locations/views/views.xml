@@ -13,15 +13,15 @@
                         <field name="products_domain_ids" invisible="1"/>
                         <field name="distribution_location_ids">
                             <tree editable="button">
-                                <field name="product_id" domain="[('id', 'in', parent.products_domain_ids)]"
-                                       widget="selection"/>
+                                <field name="product_id" domain="[('id', 'in', parent.products_domain_ids)]"  options='{"no_open": True, "no_create_edit": True}'/>
                                 <field name="location_id"/>
+                                <field name="lot_id"/>
                                 <field name="quantity"/>
                             </tree>
                         </field>
                         <field name="is_transferred" invisible="1"/>
                         <button string="Transfer" class="oe_highlight" type="object" name="distribution_locations"
-                                data-hotkey="t" attrs="{'invisible': [('is_transferred', '=', True)]}"/>
+                                data-hotkey="t"/>
                     </page>
                 </xpath>
 
@@ -35,6 +35,19 @@
             <field name="arch" type="xml">
 
                 <xpath expr="//field[@name='default_location_dest_id']" position="after">
+                    <field name="internal_transit"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="view_stock_location_form_distribution_locations" model="ir.ui.view">
+            <field name="name">view_stock_location_form_distribution_locations</field>
+            <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='return_location']" position="after">
                     <field name="internal_transit"/>
                 </xpath>
 

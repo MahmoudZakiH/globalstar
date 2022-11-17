@@ -93,6 +93,7 @@ class PurchasePlan(models.Model):
     loading_date = fields.Date(string="Loading Date", required=False, )
     payment_term_id = fields.Many2one('account.payment.term', string='Payment Terms', readonly=False)
     avg_die = fields.Integer(string="Avg Die", required=False, )
+    currency_id = fields.Many2one('res.currency', string='Currency', required=True, default=lambda self: self.env.company.currency_id)
 
     @api.model
     def create(self, vals):
@@ -125,6 +126,8 @@ class PurchasePlan(models.Model):
         print('vvvvvvvvvv', vendor)
         if len(vendor) > 1:
             raise UserError("Warning , Please choose one vendor")
+        if len(self.mapped('currency_id')) > 1:
+            raise UserError("Warning , There are purchase plan have a different currency")
         for rec in self:
             if rec.purchase_id:
                 raise UserError("Warning , There are purchase plan have a purchase order")
@@ -144,6 +147,7 @@ class PurchasePlan(models.Model):
             "order_line": order_linee,
             "partner_id": vendor[0],
             "planned_unplanned": 'planned',
+            "currency_id": self[0].currency_id.id,
 
         })
         print('purchase_order', purchase_order)

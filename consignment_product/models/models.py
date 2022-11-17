@@ -66,14 +66,13 @@ class ProductTemplate(models.Model):
     limit_discount = fields.Float(string="Limit Discount",  required=False, )
 
 
-
-class ProductProduct(models.Model):
-    _inherit = 'product.product'
-
-    is_consignment = fields.Boolean(string="Is Consignment",  )
-    is_great_a = fields.Boolean(string="Grade A", )
-    is_great_b = fields.Boolean(string="Grade B", )
-    limit_discount = fields.Float(string="Limit Discount", required=False, )
+# class ProductProduct(models.Model):
+#     _inherit = 'product.product'
+#
+#     is_consignment = fields.Boolean(string="Is Consignment",  )
+#     is_great_a = fields.Boolean(string="Grade A", )
+#     is_great_b = fields.Boolean(string="Grade B", )
+#     limit_discount = fields.Float(string="Limit Discount", required=False, )
 
 
 class AccountJournal(models.Model):
@@ -176,9 +175,9 @@ class AccountMove(models.Model):
                             'move_type': 'entry',
                             'ref': rec.name,
                             'date': fields.date.today(),
-                            'journal_id': self.env['account.journal'].sudo().search([('is_consignment','=',True)],limit=1).id if self.env['account.journal'].sudo().search([('is_consignment','=',True)],limit=1) else False ,
+                            'journal_id': self.env['account.journal'].sudo().search([('is_consignment','=',True), ('company_id','=', rec.company_id.id)],limit=1).id if self.env['account.journal'].sudo().search([('is_consignment','=',True), ('company_id','=', rec.company_id.id)],limit=1) else False ,
                             'line_ids': [(0, 0, {
-                                'account_id': self.env['account.account'].sudo().search([('is_consignment','=',True)],limit=1).id if self.env['account.account'].sudo().search([('is_consignment','=',True)],limit=1) else False ,
+                                'account_id': self.env['account.account'].sudo().search([('is_consignment','=',True), ('company_id','=', rec.company_id.id)],limit=1).id if self.env['account.account'].sudo().search([('is_consignment','=',True), ('company_id','=', rec.company_id.id)],limit=1) else False ,
                                 # 'partner_id': vendor.id,
                                 'name': 'Consignment',
                                 'debit': amount,

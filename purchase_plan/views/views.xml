@@ -49,6 +49,7 @@
                     <field name="product_id"/>
                     <field name="planned_qty"/>
                     <field name="uom_id"/>
+                    <field name="currency_id"/>
                     <field name="product_uom_category_id" invisible="1"/>
                     <field name="expected_cost"/>
                     <field name="historical_actual_cost"/>
@@ -90,6 +91,7 @@
                                 <field name="categ_id"/>
                                 <field name="product_id"/>
                                 <field name="planned_qty"/>
+                                <field name="currency_id"/>
                                 <field name="uom_id"/>
                                 <field name="product_uom_category_id" invisible="1"/>
                             </group>

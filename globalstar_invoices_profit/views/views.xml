@@ -131,7 +131,7 @@
             (0, 0, {'view_mode': 'tree', 'view_id': ref('account_move_line_global_profit_tree')}),
             (0, 0, {'view_mode': 'pivot', 'view_id': ref('account_move_line_report_view_pivot')})]"/>
             <field name="domain">[('move_type','=','out_invoice'), ('product_id','!=',False),
-                ('exclude_from_invoice_tab', '=', False)]
+                ('exclude_from_invoice_tab', '=', False), ('state', '=', 'posted')]
             </field>
         </record>
 

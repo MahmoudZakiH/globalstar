@@ -32,6 +32,7 @@ class AccountMoveLineGlobalProfit(models.Model):
     move_type = fields.Selection(related='move_id.move_type')
     invoice_user_id = fields.Many2one('res.users', string='Salesperson', related="move_id.invoice_user_id", store=1)
     invoice_date_due = fields.Date(string='Due Date', related="move_id.invoice_date_due")
+    state = fields.Selection(related='move_id.state')
 
     @api.onchange('product_id', 'quantity', 'price_unit')
     @api.constrains('product_id', 'quantity', 'price_unit')

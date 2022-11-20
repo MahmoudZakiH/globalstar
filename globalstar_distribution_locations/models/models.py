@@ -43,8 +43,8 @@ class StockPickingDistribution(models.Model):
             for product in products:
                 if sum(rec.distribution_location_ids.filtered(lambda p: p.product_id.id == product.id).mapped(
                         'quantity')) > sum(
-                        rec.move_ids_without_package.filtered(lambda p: p.product_id.id == product.id).mapped(
-                                'quantity_done')):
+                    rec.move_ids_without_package.filtered(lambda p: p.product_id.id == product.id).mapped(
+                        'quantity_done')):
                     raise UserError(_('Sorry, The quantity to be transferred is greater than the quantity transferred'))
 
             transfer_location = self.env['stock.location'].search(
@@ -86,20 +86,21 @@ class StockPickingDistribution(models.Model):
                 move_line_ids_without_package = []
                 for move in transfer_id.move_ids_without_package:
                     for product in products:
-                        products_lines = rec.distribution_location_ids.filtered(lambda p: p.product_id.id == product.id == move.product_id.id)
+                        products_lines = rec.distribution_location_ids.filtered(
+                            lambda p: p.product_id.id == product.id == move.product_id.id)
                         lots = products_lines.mapped('lot_id')
                         for lot in lots:
                             quantity = sum(products_lines.filtered(lambda p: p.lot_id.id == lot.id).mapped('quantity'))
                             move_line_ids_without_package.append((0, 0, {
-                                    'move_id': move.id,
-                                    'product_id': product.id,
-                                    'product_uom_id': product.uom_id.id,
-                                    'product_uom_qty': 0,
-                                    'qty_done': quantity,
-                                    'lot_id': lot.id,
-                                    'location_id': rec.location_dest_id.id,
-                                    'location_dest_id': transfer_location.id,
-                                }))
+                                'move_id': move.id,
+                                'product_id': product.id,
+                                'product_uom_id': product.uom_id.id,
+                                'product_uom_qty': 0,
+                                'qty_done': quantity,
+                                'lot_id': lot.id,
+                                'location_id': rec.location_dest_id.id,
+                                'location_dest_id': transfer_location.id,
+                            }))
                 transfer_id.move_line_ids_without_package = move_line_ids_without_package
                 transfer_id.sudo().button_validate()
 
@@ -132,6 +133,37 @@ class StockPickingDistribution(models.Model):
                     'move_ids_without_package': transfer_lines
                 })
                 picking.sudo().action_confirm()
+                picking.move_line_ids_without_package.sudo().unlink()
+                move_line_ids_without_package = []
+                for move in picking.move_ids_without_package:
+                    for product in products:
+                        products_lines = rec.distribution_location_ids.filtered(
+                            lambda p: p.product_id.id == product.id == move.product_id.id)
+                        lots = products_lines.mapped('lot_id')
+                        for lot in lots:
+                            lot_id = self.env['stock.production.lot'].sudo().search(
+                                [('name', '=', lot.name), ('product_id', '=', lot.product_id.id),
+                                 ('company_id', '=', internal_transit.company_id.id)])
+                            if not lot_id:
+                                lot_id = self.env['stock.production.lot'].sudo().create({
+                                    'name': lot.name,
+                                    'product_id': lot.product_id.id,
+                                    'company_id': internal_transit.company_id.id
+                                })
+                            quantity = sum(products_lines.filtered(
+                                lambda p: p.lot_id.id == lot.id and int(p.location_id) == int(location)).mapped(
+                                'quantity'))
+                            move_line_ids_without_package.append((0, 0, {
+                                'move_id': move.id,
+                                'product_id': product.id,
+                                'product_uom_id': product.uom_id.id,
+                                'product_uom_qty': 0,
+                                'qty_done': quantity,
+                                'lot_id': lot_id.id,
+                                'location_id': transfer_location.id,
+                                'location_dest_id': int(location),
+                            }))
+                picking.move_line_ids_without_package = move_line_ids_without_package
             rec.is_transferred = True
 
 

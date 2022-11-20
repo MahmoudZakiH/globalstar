@@ -21,7 +21,7 @@
                         </field>
                         <field name="is_transferred" invisible="1"/>
                         <button string="Transfer" class="oe_highlight" type="object" name="distribution_locations"
-                                data-hotkey="t"/>
+                                data-hotkey="t" attrs="{'invisible': [('is_transferred', '=', True)]}"/>
                     </page>
                 </xpath>
 

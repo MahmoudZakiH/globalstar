@@ -30,6 +30,23 @@
                     <field name="credit_limit_available"/>
                 </xpath>
 
+                <xpath expr="//group[@name='sales_person']/field[@name='company_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="purchase_order_form_globalstar_cust" model="ir.ui.view">
+            <field name="name">purchase_order_form_globalstar_cust</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='company_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
             </field>
         </record>
 
@@ -85,6 +102,19 @@
                 <xpath expr="//field[@name='journal_id']" position="attributes">
                     <attribute name="domain">[('id', 'in', allow_journal_ids)]</attribute>
                 </xpath>
+            </field>
+        </record>
+
+        <record id="view_out_invoice_tree_global_inherit" model="ir.ui.view">
+            <field name="name">view_out_invoice_tree_global_inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_invoice_tree"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='invoice_date_due']" position="attributes">
+                    <attribute name="widget">date</attribute>
+                </xpath>
+
             </field>
         </record>
 

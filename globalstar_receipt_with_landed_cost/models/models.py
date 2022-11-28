@@ -28,7 +28,7 @@ class PurchaseOrderGlobalLandedCost(models.Model):
 
     def _get_landed_cost(self):
         for rec in self:
-            rec.is_landed_cost = False
+            # rec.is_landed_cost = False
             for receipt in rec.picking_ids:
                 if receipt.landed_cost_id:
                     if receipt.landed_cost_id.state == 'done':

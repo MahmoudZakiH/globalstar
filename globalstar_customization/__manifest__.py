@@ -16,7 +16,7 @@
     'category': 'Uncategorized',
     'version': '0.1',
 
-    'depends': ['base', 'sale_stock', 'account', 'sale'],
+    'depends': ['base', 'sale_stock', 'account', 'sale', 'purchase'],
 
     'data': [
         'views/views.xml',

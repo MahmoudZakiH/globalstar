@@ -22,7 +22,7 @@ MONTH_SELECTION = [
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
-    plan_id = fields.Many2one(comodel_name="purchase.plan", string="Plane", required=False, )
+    plan_id = fields.Many2one(comodel_name="purchase.plan", string="Plan", required=False, )
 
 
 class PurchaseOrder(models.Model):
@@ -53,7 +53,7 @@ class PurchasePlan(models.Model):
     month = fields.Selection(MONTH_SELECTION, required=True)  # ,default=str(fields.Date.today().month)
 
     def _get_years(self):
-        return [(str(i), i) for i in range(fields.Date.today().year, fields.Date.today().year - 50, -1)]
+        return [(str(i), i) for i in range(fields.Date.today().year + 5, fields.Date.today().year - 50, -1)]
 
     year = fields.Selection(
         selection='_get_years', string='Year', required=True, )
@@ -94,6 +94,22 @@ class PurchasePlan(models.Model):
     payment_term_id = fields.Many2one('account.payment.term', string='Payment Terms', readonly=False)
     avg_die = fields.Integer(string="Avg Die", required=False, )
     currency_id = fields.Many2one('res.currency', string='Currency', required=True, default=lambda self: self.env.company.currency_id)
+    po_date_week_num = fields.Integer(string="Po Date Week Number", compute='_compute_po_date_week_num')
+    actual_cost_currency = fields.Float(string="Historical Actual Cost In Currency", compute='_compute_historical_actual_cost_currency')
+
+    @api.depends('historical_actual_cost')
+    def _compute_historical_actual_cost_currency(self):
+        for rec in self:
+            rec.actual_cost_currency = 0
+            if rec.historical_actual_cost != 0 and rec.currency_id:
+                rec.actual_cost_currency = rec.historical_actual_cost / rec.currency_id.rate
+
+    @api.depends('po_date')
+    def _compute_po_date_week_num(self):
+        for rec in self:
+            rec.po_date_week_num = 0
+            if rec.po_date:
+                rec.po_date_week_num = rec.po_date.isocalendar()[1]
 
     @api.model
     def create(self, vals):

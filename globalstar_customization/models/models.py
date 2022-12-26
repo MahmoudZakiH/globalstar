@@ -3,6 +3,13 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
+SPLIT_METHOD = [
+    ('equal', 'Equal'),
+    ('by_quantity', 'By Quantity'),
+    ('by_current_cost_price', 'By Current Cost'),
+    ('by_weight', 'By Weight'),
+    ('by_volume', 'By Volume'),
+]
 
 class PartnerGlobal(models.Model):
     _inherit = 'res.partner'
@@ -101,3 +108,34 @@ class AccountJournalGlobal(models.Model):
     _inherit = 'account.journal'
 
     specific_users_ids = fields.Many2many(comodel_name="res.users", relation="journal_user_rel", string="Users")
+
+
+class PurchaseOrderLineGlobal(models.Model):
+    _inherit = 'purchase.order.line'
+
+    @api.onchange('product_id')
+    def set_product_price_unit(self):
+        for rec in self:
+            rec.price_unit = 0
+
+
+class StockMoveLineGlobal(models.Model):
+    _inherit = 'stock.move.line'
+
+    container_number = fields.Char(string="Container Number")
+
+
+class StockLandedCostLines(models.Model):
+    _inherit = 'stock.landed.cost.lines'
+
+    split_method = fields.Selection(
+        SPLIT_METHOD,
+        string='Split Method',
+        default='by_weight',
+        readonly=1,
+        required=True,
+        help="Equal : Cost will be equally divided.\n"
+             "By Quantity : Cost will be divided according to product's quantity.\n"
+             "By Current cost : Cost will be divided according to product's current cost.\n"
+             "By Weight : Cost will be divided depending on its weight.\n"
+             "By Volume : Cost will be divided depending on its volume.")

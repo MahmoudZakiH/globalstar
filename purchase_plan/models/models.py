@@ -94,7 +94,8 @@ class PurchasePlan(models.Model):
     payment_term_id = fields.Many2one('account.payment.term', string='Payment Terms', readonly=False)
     avg_die = fields.Integer(string="Avg Die", required=False, )
     currency_id = fields.Many2one('res.currency', string='Currency', required=True, default=lambda self: self.env.company.currency_id)
-    po_date_week_num = fields.Integer(string="Po Date Week Number", compute='_compute_po_date_week_num')
+    po_date_week_num = fields.Integer(string="Expected Arrival Date Week Number")
+    expected_arrival_date_week_num = fields.Integer(string="Expected Arrival Date Week Number", compute='_compute_expected_arrival_date_week_num')
     actual_cost_currency = fields.Float(string="Historical Actual Cost In Currency", compute='_compute_historical_actual_cost_currency')
 
     @api.depends('historical_actual_cost')
@@ -102,14 +103,14 @@ class PurchasePlan(models.Model):
         for rec in self:
             rec.actual_cost_currency = 0
             if rec.historical_actual_cost != 0 and rec.currency_id:
-                rec.actual_cost_currency = rec.historical_actual_cost / rec.currency_id.rate
+                rec.actual_cost_currency = rec.historical_actual_cost * rec.currency_id.rate
 
-    @api.depends('po_date')
-    def _compute_po_date_week_num(self):
+    @api.depends('expected_arrival_date')
+    def _compute_expected_arrival_date_week_num(self):
         for rec in self:
-            rec.po_date_week_num = 0
-            if rec.po_date:
-                rec.po_date_week_num = rec.po_date.isocalendar()[1]
+            rec.expected_arrival_date_week_num = 0
+            if rec.expected_arrival_date:
+                rec.expected_arrival_date_week_num = rec.expected_arrival_date.isocalendar()[1]
 
     @api.model
     def create(self, vals):

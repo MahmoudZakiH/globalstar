@@ -101,11 +101,12 @@
                                 <field name="actual_cost_currency"/>
                                 <field name="purchase_id"/>
                                 <field name="po_date"/>
-                                <field name="po_date_week_num"/>
+<!--                                <field name="po_date_week_num"/>-->
                                 <field name="confirm_date"/>
                                 <field name="po_state" readonly="1" force_save="1"/>
                                 <field name="ordered_qty"/>
                                 <field name="expected_arrival_date"/>
+                                <field name="expected_arrival_date_week_num"/>
                                 <field name="actual_arrival_date"/>
                                 <field name="loading_date"/>
                                 <field name="payment_term_id"/>

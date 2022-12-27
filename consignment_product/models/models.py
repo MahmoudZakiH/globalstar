@@ -204,16 +204,10 @@ class StockProductionLot(models.Model):
     vendor_id = fields.Many2one(comodel_name="res.partner", string="Vendor", required=False, store=True,)
 
 
-
-
-
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
-
-
     vendor_id = fields.Many2one(comodel_name="res.partner", string="Vendor", required=False,store=True , related='picking_id.partner_id' )
-
 
     def button_create_lot(self):
         for rec in self:
@@ -253,3 +247,25 @@ class StockMove(models.Model):
                         'product_uom_id': rec.product_uom.id,
                     }])
                     rec.move_line_nosuggest_ids = lines
+
+
+class StockMoveLine(models.Model):
+    _inherit = 'stock.move.line'
+
+    def button_create_lot(self):
+        for rec in self:
+            old_sequence = self.env['stock.production.lot'].sudo().search([('product_id','=',rec.product_id.id)],).mapped('seq')
+            if old_sequence :
+                old_sequence = max(old_sequence) + 1
+            else:
+                old_sequence = 1
+            if not rec.lot_id:
+                if len(str(old_sequence)) <= 4:
+                    sequence = str(rec.product_id.default_code[0:4] if rec.product_id.default_code else '') + '/' + str(rec.picking_id.scheduled_date.date()) + '/' + (4 - len(str(old_sequence))) * '0' + str(old_sequence)
+                    lot=self.env['stock.production.lot'].sudo().create({
+                        'name' : sequence,
+                        'product_id' : rec.product_id.id ,
+                        'vendor_id' : rec.picking_id.partner_id.id ,
+                        'seq' : old_sequence ,
+                    })
+                    rec.lot_id = lot.id

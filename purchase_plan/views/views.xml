@@ -29,7 +29,7 @@
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='product_qty']" position="after">
                     <!-- Add your fields or attributes here -->
-                    <field name="plan_id"/>
+                    <field name="plan_id" domain="[('po_state', 'in', ['draft', 'sent'])]"/>
                 </xpath>
 
             </field>
@@ -98,12 +98,15 @@
                             <group>
                                 <field name="expected_cost"/>
                                 <field name="historical_actual_cost"/>
+                                <field name="actual_cost_currency"/>
                                 <field name="purchase_id"/>
                                 <field name="po_date"/>
+<!--                                <field name="po_date_week_num"/>-->
                                 <field name="confirm_date"/>
                                 <field name="po_state" readonly="1" force_save="1"/>
                                 <field name="ordered_qty"/>
                                 <field name="expected_arrival_date"/>
+                                <field name="expected_arrival_date_week_num"/>
                                 <field name="actual_arrival_date"/>
                                 <field name="loading_date"/>
                                 <field name="payment_term_id"/>

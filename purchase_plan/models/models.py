@@ -22,7 +22,7 @@ MONTH_SELECTION = [
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
-    plan_id = fields.Many2one(comodel_name="purchase.plan", string="Plane", required=False, )
+    plan_id = fields.Many2one(comodel_name="purchase.plan", string="Plan", required=False, )
 
 
 class PurchaseOrder(models.Model):
@@ -32,6 +32,8 @@ class PurchaseOrder(models.Model):
                                          selection=[('planned', 'Planned'), ('unplanned', 'UnPlanned'), ],
                                          required=False, default='unplanned')
     loading_date = fields.Date(string="Loading Date", required=False, )
+    is_new_field = fields.Boolean()
+    active = fields.Boolean('Active', default=True)
 
     @api.onchange('date_planned', 'loading_date', 'payment_term_id', 'order_line', 'order_line.product_qty')
     def _onchange_plane_fields(self):
@@ -53,7 +55,7 @@ class PurchasePlan(models.Model):
     month = fields.Selection(MONTH_SELECTION, required=True)  # ,default=str(fields.Date.today().month)
 
     def _get_years(self):
-        return [(str(i), i) for i in range(fields.Date.today().year, fields.Date.today().year - 50, -1)]
+        return [(str(i), i) for i in range(fields.Date.today().year + 5, fields.Date.today().year - 50, -1)]
 
     year = fields.Selection(
         selection='_get_years', string='Year', required=True, )
@@ -94,6 +96,23 @@ class PurchasePlan(models.Model):
     payment_term_id = fields.Many2one('account.payment.term', string='Payment Terms', readonly=False)
     avg_die = fields.Integer(string="Avg Die", required=False, )
     currency_id = fields.Many2one('res.currency', string='Currency', required=True, default=lambda self: self.env.company.currency_id)
+    po_date_week_num = fields.Integer(string="Expected Arrival Date Week Number")
+    expected_arrival_date_week_num = fields.Integer(string="Expected Arrival Date Week Number", compute='_compute_expected_arrival_date_week_num')
+    actual_cost_currency = fields.Float(string="Historical Actual Cost In Currency", compute='_compute_historical_actual_cost_currency')
+
+    @api.depends('historical_actual_cost')
+    def _compute_historical_actual_cost_currency(self):
+        for rec in self:
+            rec.actual_cost_currency = 0
+            if rec.historical_actual_cost != 0 and rec.currency_id:
+                rec.actual_cost_currency = rec.historical_actual_cost * rec.currency_id.rate
+
+    @api.depends('expected_arrival_date')
+    def _compute_expected_arrival_date_week_num(self):
+        for rec in self:
+            rec.expected_arrival_date_week_num = 0
+            if rec.expected_arrival_date:
+                rec.expected_arrival_date_week_num = rec.expected_arrival_date.isocalendar()[1]
 
     @api.model
     def create(self, vals):

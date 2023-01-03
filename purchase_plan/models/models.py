@@ -32,6 +32,8 @@ class PurchaseOrder(models.Model):
                                          selection=[('planned', 'Planned'), ('unplanned', 'UnPlanned'), ],
                                          required=False, default='unplanned')
     loading_date = fields.Date(string="Loading Date", required=False, )
+    is_new_field = fields.Boolean()
+    active = fields.Boolean('Active', default=True)
 
     @api.onchange('date_planned', 'loading_date', 'payment_term_id', 'order_line', 'order_line.product_qty')
     def _onchange_plane_fields(self):
